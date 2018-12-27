@@ -1,0 +1,31 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="base_to_kinect_broadcaster" args="-0.17 0.04 0.1975 0 0 0 \/base_link \/camera_link 100" />
+<! --this is for the old robot, still in the new one we need to put the correct values for it /-->  
+  <!--we use the kinect sensor as a fake laser scanner /-->
+  <include file="$(find robot)/launch/kinect_laser.launch" />
+    <!--this will be the lauch for the realsense /-->
+  <!-- cmd_vel mux for prioritizing cmd_vel topics /-->
+  <!--node name="mux" pkg="topic_tools" type="mux" args="cmd_vel_mux teleop_cmd_vel cmd_vel"/-->
+ 
+  <!--serial communication between arduino and pc via usb /-->
+  <node name="arduino_serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
+    <param name="port" value="/dev/ttyACM0" />
+    <param name="baud" value="57600" />
+  </node>
+  <!--we're goin to use this node to manage the data from the icsp of the robot/-->
+ 
+
+  <node name="base_controller_node" pkg="my_personal_robotic_companion" type="base_controller">
+    <param name="publish_tf" value="true" />
+    <param name="publish_rate" value="10.0" />
+    <param name="linear_scale_positive" value="0.99" />
+    <param name="linear_scale_negative" value="0.99" />
+    <param name="angular_scale_positive" value="1.0" />
+    <param name="angular_scale_negative" value="1.0" />
+    <param name="angular_scale_accel" value="0.0" />
+    <param name="alpha" value="0.5" />
+    <param name="use_imu" value="true" />
+  </node>
+  <!--this is the base controller of the robot, takes the information of the rpm node and conver it into odom informaiton /-->
+
+</launch>
