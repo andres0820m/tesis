@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>move_robot</name>
+  <version>0.5.0</version>
+  <description>Move a futbol robot.</description>
+
+  <maintainer email="andres0820m@gmail.com">andres mejia</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website"></url>
+
+  <author>andres mejia </author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+</package>
