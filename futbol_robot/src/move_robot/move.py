@@ -8,9 +8,9 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 import usb.core
 import usb.util
 import sys, select, termios, tty
-
 rospy.init_node('base_controller')
 odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
+odom_broadcaster = tf.TransformBroadcaster()
 
 
 ###################################################3
@@ -35,7 +35,8 @@ kz = []
 sp = []
 
 MAX_PWM = 300
-wheel_diameter=2/1000;#put here the real value
+wheel_diameter=5.5/100;#put here the real value 5.5 cm
+track_width = 0.172788 # put here the real value in meters
 msg = []
 
 
@@ -103,49 +104,72 @@ def getMsg(id, w1, w2, w3, w4, rod, pot, type, prog):
     return msg
 
 
-def send( ROBOTS_IN_FIELD ):
+def send( cRobot, vx,vy,vw ): #cRobot is the robot Id vx vy and vw are the speed that u wanna put to the robot
     global Dmat, msg
     msg = []
-    for cRobot in ROBOTS_IN_FIELD:
-        if cRobot != -1:
-            motVel = np.matmul(Dmat, [[vy[cRobot]], [vx[cRobot]], [vw[cRobot]]])
-            motVel[0] = motVel[0] if motVel[0] <= 1.0 else 1.0
-            motVel[1] = motVel[1] if motVel[1] <= 1.0 else 1.0
-            motVel[2] = motVel[2] if motVel[2] <= 1.0 else 1.0
-            motVel[3] = motVel[3] if motVel[3] <= 1.0 else 1.0
-            n= 60/pi*wheel_diameter #here u've to put the relation between the rpm and the pwm, this is the relation between linear v and rpm
-            motPwm = motVelRpm*n * MAX_PWM ## change this with correct values of pwm values
-
-            msg = msg + getMsg(cRobot, motPwm[0][0], motPwm[1][0], motPwm[2][0], motPwm[3][0],  0, 0, False, False)
+    data = rpm_Data(vx,vy,vw)
+    #print(data)
+    motVel = np.matmul(Dmat, [data[0], data[1], data[2]]) #put this data in rpm or in pwm
+    print(motVel)
+    motPwm = pwm_Data(motVel)
+    #print(motPwm)
+    msg = msg + getMsg(cRobot, motPwm[0], motPwm[1], motPwm[2], motPwm[3],  0, 0, False, False)
+    #msg = msg + getMsg(cRobot, 1, 1, 1, 1,  0, 0, False, False)
     ep.write(msg)
 
-data=[]
-def cmd_Veldata(msg):
 
-    data[0]=msg.linear.x
-    data[1]=msg.linear.y
-    data[2]=msg.angular.z
+def cmd_Veldata(Msg):
+    global data
+    data=[Msg.linear.x,Msg.linear.y,Msg.angular.z]
+    dat.linear.x=Msg.linear.x
+    dat.linear.y = Msg.linear.y
+    dat.angular.z = Msg.angular.z
 
-###################################### ros publisher
+
+# rpm= 2.6198*pwm + 4.97
+# rpwm=rpm/2.6198 -4.97
+def pwm_Data(motor): # conver the data from vx vy and vw into pwm  data for the motors
+
+    #print(motor)
+    data1 = [(motor[0]/2.7325),(motor[1]/2.7325),(motor[2]/2.7325),(motor[3]/2.7325)]
+
+    return data1
+
+def rpm_Data(vx,vy,vw):
+
+    data1=[(60 * vx) / (3.1416 * wheel_diameter),(60 * vy) / (3.1416 * wheel_diameter),(vw * track_width * 60 / (wheel_diameter * 3.1416 * 2))]
+    return data1
+
+###################################### ros
 
 init()
-
+dat=Twist()
 rospy.Subscriber("cmd_vel",Twist,cmd_Veldata)
-rospy.spin()
+
+#rospy.spin()
+current_time = rospy.Time.now()
+last_time = rospy.Time.now()
+
+r = rospy.Rate(45)
 while not rospy.is_shutdown():
 
 
     current_time = rospy.Time.now()
-
-
+    rospy.Subscriber("cmd_vel", Twist, cmd_Veldata)
+    #send(1,1,1,1)
     # compute odometry in a typical way given the velocities of the robot
     dt = (current_time - last_time).to_sec()
-    vx = data[0]
-    vy = data[1]
-    vth = data[2]
-    delta_x = (vx * cos(th) - vy * sin(th)) * dt
-    delta_y = (vx * sin(th) + vy * cos(th)) * dt
-    delta_th = vth * dt
+    vx = dat.linear.x
+    vy = dat.linear.y
+    vth = dat.angular.z
+    x=0
+    y=0
+    th=0
+    #print(vx,vy,vth)
+    send(1,vx,vy,vth)
+    delta_x = (vx * np.cos(th) - vy * np.sin(th)) * dt
+    delta_y = (vx * np.sin(th) + vy * np.cos(th)) * dt
+    delta_th = th * dt
 
     x += delta_x
     y += delta_y
