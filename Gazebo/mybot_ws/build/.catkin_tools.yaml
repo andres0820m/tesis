@@ -1,0 +1,6 @@
+devel_space: /home/jhnavasb/mybot_ws/devel
+install: false
+install_space: /home/jhnavasb/mybot_ws/install
+profile: default
+source_space: /home/jhnavasb/mybot_ws/src
+workspace: /home/jhnavasb/mybot_ws

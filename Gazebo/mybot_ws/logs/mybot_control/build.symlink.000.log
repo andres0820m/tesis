@@ -1,0 +1,3 @@
+Symlinking /home/jhnavasb/mybot_ws/devel/lib/pkgconfig/mybot_control.pc
+Symlinking /home/jhnavasb/mybot_ws/devel/share/mybot_control/cmake/mybot_controlConfig.cmake
+Symlinking /home/jhnavasb/mybot_ws/devel/share/mybot_control/cmake/mybot_controlConfig-version.cmake

@@ -1,0 +1,3 @@
+Symlinking /home/jhnavasb/mybot_ws/devel/lib/pkgconfig/mybot_teleop.pc
+Symlinking /home/jhnavasb/mybot_ws/devel/share/mybot_teleop/cmake/mybot_teleopConfig-version.cmake
+Symlinking /home/jhnavasb/mybot_ws/devel/share/mybot_teleop/cmake/mybot_teleopConfig.cmake

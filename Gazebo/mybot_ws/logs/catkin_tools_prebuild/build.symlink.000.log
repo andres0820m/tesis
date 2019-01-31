@@ -1,0 +1,8 @@
+Symlinking /home/jhnavasb/mybot_ws/devel/./_setup_util.py
+Symlinking /home/jhnavasb/mybot_ws/devel/./env.sh
+Symlinking /home/jhnavasb/mybot_ws/devel/./setup.zsh
+Symlinking /home/jhnavasb/mybot_ws/devel/./setup.sh
+Symlinking /home/jhnavasb/mybot_ws/devel/./setup.bash
+Symlinking /home/jhnavasb/mybot_ws/devel/lib/pkgconfig/catkin_tools_prebuild.pc
+Symlinking /home/jhnavasb/mybot_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /home/jhnavasb/mybot_ws/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
